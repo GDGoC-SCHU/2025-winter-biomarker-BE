@@ -1,4 +1,4 @@
-.env
+application-dev.yml
 HELP.md
 .gradle
 build/
