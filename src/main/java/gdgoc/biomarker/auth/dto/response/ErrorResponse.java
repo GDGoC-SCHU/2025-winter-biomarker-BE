@@ -1,4 +1,4 @@
-package gdgoc.biomarker.auth.dto;
+package gdgoc.biomarker.auth.dto.response;
 
 public class ErrorResponse {
     private String error;

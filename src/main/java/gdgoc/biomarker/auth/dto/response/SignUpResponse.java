@@ -1,4 +1,4 @@
-package gdgoc.biomarker.auth.dto;
+package gdgoc.biomarker.auth.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,9 +1,9 @@
 package gdgoc.biomarker.auth.service;
 
-import gdgoc.biomarker.auth.dto.LoginRequest;
-import gdgoc.biomarker.auth.dto.LoginResponse;
-import gdgoc.biomarker.auth.dto.SignUpRequest;
-import gdgoc.biomarker.auth.dto.SignUpResponse;
+import gdgoc.biomarker.auth.dto.request.LoginRequest;
+import gdgoc.biomarker.auth.dto.response.LoginResponse;
+import gdgoc.biomarker.auth.dto.request.SignUpRequest;
+import gdgoc.biomarker.auth.dto.response.SignUpResponse;
 import gdgoc.biomarker.users.entity.User;
 import gdgoc.biomarker.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

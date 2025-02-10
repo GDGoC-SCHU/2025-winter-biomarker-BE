@@ -1,4 +1,5 @@
-package gdgoc.biomarker.auth.dto;
+package gdgoc.biomarker.auth.dto.request;
+
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,8 +8,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class LoginRequest {
+public class SignUpRequest {
 
+    private String name;
     private String email;
     private String password;
+    private String gender;
 }
