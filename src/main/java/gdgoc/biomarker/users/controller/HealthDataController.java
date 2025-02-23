@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/health")
+@RequestMapping("/user/health")
 public class HealthDataController {
 
     @Autowired
@@ -45,6 +45,8 @@ public class HealthDataController {
 
         // Flask 서버로 전송 및 응답 받기
         String flaskResponse = healthDataService.sendHealthDataToFlaskServer(healthDataRequest,userId);
+
+        // Flask 서버에서 받은 식단 정보 문자열을 그대로 클라이언트에 반환
         return new ResponseEntity<>(flaskResponse, HttpStatus.CREATED);
     }
 

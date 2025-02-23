@@ -28,7 +28,7 @@ public class HealthData {
 
     private String gender; // 성별
 
-    public HealthData(double height, double weight, double body_fat_percentage, double skeletal_muscle_mass, double bmr, double body_fat_mass, String goal,String gneder) {
+    public HealthData(double height, double weight, double body_fat_percentage, double skeletal_muscle_mass, double bmr, double body_fat_mass, String goal,String gender) {
         this.height = height;
         this.weight = weight;
         this.body_fat_percentage = body_fat_percentage;
@@ -37,7 +37,7 @@ public class HealthData {
         this.body_fat_mass = body_fat_mass;
         this.goal = goal;
         this.bmi = calculateBMI(height,weight);
-        this.gender = gneder;
+        this.gender = gender;
     }
 
     // BMI 계산 함수
