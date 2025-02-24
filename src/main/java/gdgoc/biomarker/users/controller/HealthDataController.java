@@ -29,6 +29,11 @@ public class HealthDataController {
         // UserRepository 에서 성별 가져오기
         String gender = userRepository.findGenderById(userId);
 
+        // 만약 userId가 없다면 400에러와 메세지 반환
+        if(gender == null) {
+            return ResponseEntity.status(400).body("찾을 수 없는 userId입니다");
+        }
+
         // HealthDataRequest로부터 받은 데이터를 바탕으로 FlaskRequestDto 생성
         FlaskRequestDto flaskRequestDto = new FlaskRequestDto(
                 healthDataRequest.getHeight(),
@@ -40,6 +45,14 @@ public class HealthDataController {
                 healthDataRequest.getGoal(),
                 gender // 성별 추가
         );
+
+        // Flask 서버로 전송 및 응답 받기
+        String flaskResponse = healthDataService.sendHealthDataToFlaskServer(flaskRequestDto,userId);
+
+        // Flask 서버에서 오류 응답을 받은 경우 처리
+        if(flaskResponse == null || flaskResponse.contains("error") || flaskResponse.contains("실패")){
+            return ResponseEntity.status(400).body("Flask 서버에서 오류가 발생했습니다. 데이터 저장이 취소되었습니다.");
+        }
 
         // HealthData 엔티티로 변환
         HealthData healthData = new HealthData(
@@ -55,10 +68,6 @@ public class HealthDataController {
 
         // 데이터베이스에 저장
         HealthData savedHealthData = healthDataRepository.save(healthData);
-
-        // Flask 서버로 전송 및 응답 받기
-        String flaskResponse = healthDataService.sendHealthDataToFlaskServer(flaskRequestDto,userId);
-
         // Flask 서버에서 받은 식단 정보 문자열을 그대로 클라이언트에 반환
         return new ResponseEntity<>(flaskResponse, HttpStatus.CREATED);
     }
