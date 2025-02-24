@@ -28,15 +28,13 @@ public class HealthDataController {
     private HealthDataService healthDataService; // HealthDataService 추가
 
     @PostMapping("/add/{userId}")
-    public ResponseEntity<Map<String,Object>> addHealthData(@RequestBody HealthDataRequest healthDataRequest, @PathVariable Long userId) {
+    public ResponseEntity<Object> addHealthData(@RequestBody HealthDataRequest healthDataRequest, @PathVariable Long userId) {
         // UserRepository 에서 성별 가져오기
         String gender = userRepository.findGenderById(userId);
 
         // 만약 userId가 없다면 400에러와 메세지 반환
         if(gender == null) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("message", "찾을 수 없는 userId입니다.");
-            return ResponseEntity.status(400).body(errorResponse);
+            return ResponseEntity.status(400).body("찾을 수 없는 userId입니다.");
         }
 
         // HealthDataRequest로부터 받은 데이터를 바탕으로 FlaskRequestDto 생성
@@ -56,9 +54,7 @@ public class HealthDataController {
 
         // Flask 서버에서 오류 응답을 받은 경우 처리
         if(flaskResponse == null || flaskResponse.contains("error") || flaskResponse.contains("실패")){
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Flask 서버에서 오류가 발생했습니다. 데이터 저장이 취소되었습니다.");
-            return ResponseEntity.status(400).body(errorResponse);
+            return ResponseEntity.status(400).body("Flask 서버에서 오류가 발생했습니다. 데이터 저장이 취소되었습니다.");
         }
 
         // HealthData 엔티티로 변환
@@ -76,10 +72,7 @@ public class HealthDataController {
         // 데이터베이스에 저장
         HealthData savedHealthData = healthDataRepository.save(healthData);
         // Flask 서버에서 받은 식단 정보 문자열을 그대로 클라이언트에 반환
-        Map<String, Object> successResponse = new HashMap<>();
-        successResponse.put("message", "Health data successfully saved.");
-        successResponse.put("flaskResponse", flaskResponse); // Flask에서 받은 식단 정보 포함
-        return new ResponseEntity<>(successResponse, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(flaskResponse);
     }
 
 }
