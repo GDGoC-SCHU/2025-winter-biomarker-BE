@@ -1,5 +1,6 @@
 package gdgoc.biomarker.users.controller;
 
+import gdgoc.biomarker.users.dto.FlaskRequestDto;
 import gdgoc.biomarker.users.dto.HealthDataRequest;
 import gdgoc.biomarker.users.entity.HealthData;
 import gdgoc.biomarker.users.repository.HealthDataRepository;
@@ -28,6 +29,18 @@ public class HealthDataController {
         // UserRepository 에서 성별 가져오기
         String gender = userRepository.findGenderById(userId);
 
+        // HealthDataRequest로부터 받은 데이터를 바탕으로 FlaskRequestDto 생성
+        FlaskRequestDto flaskRequestDto = new FlaskRequestDto(
+                healthDataRequest.getHeight(),
+                healthDataRequest.getWeight(),
+                healthDataRequest.getBody_fat_percentage(),
+                healthDataRequest.getSkeletal_muscle_mass(),
+                healthDataRequest.getBmr(),
+                healthDataRequest.getBody_fat_mass(),
+                healthDataRequest.getGoal(),
+                gender // 성별 추가
+        );
+
         // HealthData 엔티티로 변환
         HealthData healthData = new HealthData(
                 healthDataRequest.getHeight(),
@@ -44,7 +57,7 @@ public class HealthDataController {
         HealthData savedHealthData = healthDataRepository.save(healthData);
 
         // Flask 서버로 전송 및 응답 받기
-        String flaskResponse = healthDataService.sendHealthDataToFlaskServer(healthDataRequest,userId);
+        String flaskResponse = healthDataService.sendHealthDataToFlaskServer(flaskRequestDto,userId);
 
         // Flask 서버에서 받은 식단 정보 문자열을 그대로 클라이언트에 반환
         return new ResponseEntity<>(flaskResponse, HttpStatus.CREATED);
