@@ -4,12 +4,15 @@ import gdgoc.biomarker.users.dto.FlaskRequestDto;
 import gdgoc.biomarker.users.dto.HealthDataRequest;
 import gdgoc.biomarker.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 @Service
 public class HealthDataService {
@@ -24,30 +27,22 @@ public class HealthDataService {
     }
 
     // Flask 서버로 데이터를 전송하는 메소드
-    public String sendHealthDataToFlaskServer(FlaskRequestDto flaskRequestDto, Long userId) {
-        // UserRepository 에서 성별 가져오기
+    public Map<String, Object> sendHealthDataToFlaskServer(FlaskRequestDto flaskRequestDto, Long userId) {
         String gender = userRepository.findGenderById(userId);
-
-
-        // Flask 서버 URL
         String flaskServerUrl = "http://localhost:5000/" + userId + "/recommend_meal";
 
-        // HTTP 요청 헤더 설정
-        HttpHeaders headers =  new HttpHeaders();
+        HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
-
-        // HTTP 요청 본문
         HttpEntity<FlaskRequestDto> request = new HttpEntity<>(flaskRequestDto, headers);
 
-        // Flask 서버로 POST 요청 보내기
-        ResponseEntity<String> response = restTemplate.exchange(
+        // JSON을 Map으로 변환
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 flaskServerUrl,
                 HttpMethod.POST,
                 request,
-                String.class
+                new ParameterizedTypeReference<Map<String, Object>>() {}
         );
 
-       // Flask 서버에서 반환된 응답 문자열 반환
         return response.getBody();
     }
 }

@@ -50,11 +50,14 @@ public class HealthDataController {
         );
 
         // Flask 서버로 전송 및 응답 받기
-        String flaskResponse = healthDataService.sendHealthDataToFlaskServer(flaskRequestDto,userId);
+        Map<String, Object> flaskResponse = healthDataService.sendHealthDataToFlaskServer(flaskRequestDto, userId);
 
         // Flask 서버에서 오류 응답을 받은 경우 처리
-        if(flaskResponse == null || flaskResponse.contains("error") || flaskResponse.contains("실패")){
-            return ResponseEntity.status(400).body("Flask 서버에서 오류가 발생했습니다. 데이터 저장이 취소되었습니다.");
+        if (flaskResponse == null || !flaskResponse.containsKey("answer") ||
+                flaskResponse.get("answer").toString().toLowerCase().contains("error") ||
+                flaskResponse.get("answer").toString().contains("실패")) {
+
+            return ResponseEntity.status(400).body(Map.of("message", "Flask 서버에서 오류가 발생했습니다. 데이터 저장이 취소되었습니다."));
         }
 
         // HealthData 엔티티로 변환
@@ -71,8 +74,8 @@ public class HealthDataController {
 
         // 데이터베이스에 저장
         HealthData savedHealthData = healthDataRepository.save(healthData);
-        // Flask 서버에서 받은 식단 정보 문자열을 그대로 클라이언트에 반환
-        return ResponseEntity.status(HttpStatus.CREATED).body(flaskResponse);
+
+        return ResponseEntity.ok(flaskResponse);
     }
 
 }
